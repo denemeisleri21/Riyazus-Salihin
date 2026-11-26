@@ -1,0 +1,38 @@
+name: APK Oluştur (Riyâzü's-Sâlihîn)
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Proje dosyalarını indir
+        uses: actions/checkout@v4
+
+      - name: Java 17 kur
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Gradle 8.7 kur
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: APK derle (Debug)
+        run: gradle assembleDebug --no-daemon
+
+      - name: APK dosyasını adlandır
+        run: cp app/build/outputs/apk/debug/app-debug.apk RiyazusSalihin.apk
+
+      - name: APK dosyasını indirilebilir olarak yükle
+        uses: actions/upload-artifact@v4
+        with:
+          name: RiyazusSalihin-APK
+          path: RiyazusSalihin.apk
+          retention-days: 30
